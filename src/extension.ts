@@ -1,29 +1,35 @@
 'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as cp from 'child_process';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "runarbitrary" is now active!');
-
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
-        // The code you place here will be executed every time your command is executed
-
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World!');
+  let disposable = vscode.commands.registerCommand('extension.runArbitrary', () => {
+    var output = vscode.window.createOutputChannel('foo');
+    output.show(vscode.ViewColumn.Two);
+    var editor = vscode.window.activeTextEditor;
+    var fileName = editor.document.fileName;
+    var position = editor.selection.active;
+    var line_number = position.line.toString();
+    var scriptPath = "C:/Dropbox/z_QDev_Morten_Hels_programs/meta/run_arbitrary.py";
+    var args = [scriptPath, fileName, "--line_number", line_number];
+    var opts = {env: process.env};
+    let child = cp.spawn("python", args, opts);
+    child.stdout.on('data', (data) => {
+      output.append(data.toString());
     });
+    child.stderr.on('data', (data) => {
+      output.append(data.toString());
+    });
+    child.on('close', (code, signal) => {
+      if (signal)
+        output.appendLine('Exited with signal ' + signal)
+      else if (code)
+        output.appendLine('Exited with status ' + code)
+    });
+  });
 
-    context.subscriptions.push(disposable);
+  context.subscriptions.push(disposable);
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() {
 }

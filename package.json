@@ -11,13 +11,19 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:extension.runArbitrary"
     ],
     "main": "./out/src/extension",
     "contributes": {
         "commands": [{
-            "command": "extension.sayHello",
-            "title": "Hello World"
+            "command": "extension.runArbitrary",
+            "title": "runArbitrary"
+        }],
+        "keybindings": [{
+            "command": "extension.runArbitrary",
+            "key": "f1",
+            "mac": "f1",
+            "when": "editorTextFocus"
         }]
     },
     "scripts": {
