@@ -1,6 +1,7 @@
 'use strict';
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
+import {dirname} from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
   let disposable = vscode.commands.registerCommand('extension.runArbitrary', () => {
@@ -12,7 +13,8 @@ export function activate(context: vscode.ExtensionContext) {
     var line_number = position.line.toString();
     var scriptPath = "C:/Dropbox/z_QDev_Morten_Hels_programs/meta/run_arbitrary.py";
     var args = [scriptPath, fileName, "--line_number", line_number];
-    var opts = {env: process.env};
+    var cwd = dirname(editor.document.fileName);
+    var opts = {env: process.env, cwd: cwd};
     let child = cp.spawn("python", args, opts);
     child.stdout.on('data', (data) => {
       output.append(data.toString());
