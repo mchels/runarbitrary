@@ -8,12 +8,14 @@ export function activate(context: vscode.ExtensionContext) {
     var output = vscode.window.createOutputChannel('foo');
     output.show(vscode.ViewColumn.Two);
     var editor = vscode.window.activeTextEditor;
-    var fileName = editor.document.fileName;
+    var document = editor.document;
+    document.save();
+    var fileName = document.fileName;
     var position = editor.selection.active;
     var line_number = position.line.toString();
     var scriptPath = "C:/Dropbox/z_QDev_Morten_Hels_programs/meta/run_arbitrary.py";
     var args = [scriptPath, fileName, "--line_number", line_number];
-    var cwd = dirname(editor.document.fileName);
+    var cwd = dirname(fileName);
     var opts = {env: process.env, cwd: cwd};
     let child = cp.spawn("python", args, opts);
     child.stdout.on('data', (data) => {
